@@ -9,6 +9,8 @@
 #define PW 200.0
 #define PH 500.0
 
+//gcc Reshape.c -o Reshape glut32.lib -lopengl32 -lglu32
+
 GLfloat 
 	downX, 
 	downY, 
@@ -36,12 +38,17 @@ struct button
 
 int selectedShape = 0;
 int mainWindow;
-int palleteWindow;
+int palleteWindow = -1;
+int CLEAR = 1;
 
 void display()
 {
 	glClearColor(1.0,1.0,1.0,1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	if(CLEAR == 1)
+	{
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+	CLEAR = !CLEAR;
 	glColor3f(0.0,0.0,0.0);
 	glPointSize(3.0);
 
@@ -254,9 +261,12 @@ void selectColor(int item)
 		} break;
 		default: {} break;
 	}
-	glutSetWindow(palleteWindow);
-	glutPostRedisplay();
-	glutSetWindow(mainWindow);
+	if(palleteWindow != -1)
+	{	
+		glutSetWindow(palleteWindow);
+		glutPostRedisplay();
+		glutSetWindow(mainWindow);
+	}	
 	return;
 }
 
@@ -266,18 +276,6 @@ void selectShape(int item)
 	return;
 }
 
-void menu(int item)
-{
-	switch(item)
-	{
-		case 0:
-		{
-			glutPostRedisplay();
-		}break;
-		default:{}break;
-	}
-	return;
-}
 void mousePressHandler(GLint button, GLint state, GLint x, GLint y)
 {
 	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
@@ -364,6 +362,32 @@ void moveSliders( GLint x , GLint y )
 	prevY = curY;
 	return;
 }
+
+void menu(int item)
+{
+	switch(item)
+	{
+		case 0:
+		{
+			CLEAR = 1;
+			glutPostRedisplay();
+		}break;
+		case 1:
+		{
+			glutInitWindowSize(PW,PH);
+			glutInitWindowPosition(500 - (PW+20),200);
+			palleteWindow = glutCreateWindow("color picker");
+
+			glutDisplayFunc(displayPalette);
+			glutMouseFunc(mousePressHandler);
+			glutMotionFunc(moveSliders);
+
+		}
+		default:{}break;
+	}
+	return;
+}
+
 int createMainWindow()
 {
 	glutInitWindowSize(WW,WH);
@@ -414,6 +438,7 @@ int addMainMenu()
 	glutAddSubMenu("color",colorSubMenu);
 	glutAddSubMenu("shape",shapeMenu);
 	glutAddMenuEntry("clear",0);
+	glutAddMenuEntry("Add Color",1);
 
 	return mainMenu;
 }
@@ -425,7 +450,7 @@ int main(int argc, char **argv)
 	
 	mainWindow = createMainWindow();
 
-	palleteWindow = createPalleteWindow();
-
+	//palleteWindow = createPalleteWindow();
+	//CLEAR = 0;
 	glutMainLoop();
 }
