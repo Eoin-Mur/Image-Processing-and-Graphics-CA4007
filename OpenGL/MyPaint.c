@@ -5,11 +5,23 @@
 #include <string.h>
 
 #define WW 800.0
-#define WH 500.0
-#define PW 200.0
-#define PH 500.0
+#define WH 600.0
 
-//gcc Reshape.c -o Reshape glut32.lib -lopengl32 -lglu32
+#define CW 250.0
+#define CH 250.0
+
+#define BW 200.0
+#define BH 250.0
+
+//gcc MyPaint.c -o myPaint glut32.lib -lopengl32 -lglu32
+
+void drawPolly(int x1, int y1, int x2, int y2, float h, float w);
+void drawPoint(GLint x, GLint y);
+void drawRectagle(GLint x, GLint y);
+void drawPoint(GLint x, GLint y);
+void drawLine(GLint x, GLint y);
+
+
 
 GLfloat 
 	downX, 
@@ -24,7 +36,8 @@ GLfloat
 float
 	r,
 	g,
-	b;
+	b,
+	a = 1.0;
 
 struct button
 {
@@ -39,17 +52,14 @@ struct button
 int selectedShape = 0;
 int mainWindow;
 int palleteWindow = -1;
-int CLEAR = 1;
+int brightnessWindow = -1;
 
+ 
 void display()
 {
 	glClearColor(1.0,1.0,1.0,1.0);
-	if(CLEAR == 1)
-	{
-		glClear(GL_COLOR_BUFFER_BIT);
-	}
-	CLEAR = !CLEAR;
-	glColor3f(0.0,0.0,0.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor4f(0.0,0.0,0.0,1.0);
 	glPointSize(3.0);
 
 	glFlush();
@@ -57,63 +67,76 @@ void display()
 	return;
 }
 
-void displayPalette()
+void displayRGBSlider()
 {
 	glClearColor(1.0,1.0,1.0,1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(0.0,0.0,0.0);
-	glLineWidth(3.0);
 
-	glBegin(GL_LINES);
-		glVertex2f(-1.0,1.0);
-		glVertex2f(-1.0,-1.0);
-	glEnd();
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor4f(0.0,0.0,0.0,1.0);
+	glLineWidth(3.0);
 	glFlush();
 
+	glColor4f(0.5,0.5,0.5,1.0);
 
-	glBegin(GL_POLYGON);
-		glColor3f(0.5,0.5,0.5);
-		glVertex2f((10-(PW/2))/(PW/2),(210-(PH/2))/(PH/2));
-		glVertex2f((10-(PW/2))/(PW/2),(10-(PH/2))/(PH/2));
-		glVertex2f((60-(PW/2))/(PW/2),(10-(PH/2))/(PH/2));
-		glVertex2f((60-(PW/2))/(PW/2),(210-(PH/2))/(PH/2));
-	glEnd();
-
-	glBegin(GL_POLYGON);
-		glColor3f(0.5,0.5,0.5);
-		glVertex2f((70-(PW/2))/(PW/2),(210-(PH/2))/(PH/2));
-		glVertex2f((70-(PW/2))/(PW/2),(10-(PH/2))/(PH/2));
-		glVertex2f((120-(PW/2))/(PW/2),(10-(PH/2))/(PH/2));
-		glVertex2f((120-(PW/2))/(PW/2),(210-(PH/2))/(PH/2));
-	glEnd();
-
-	glBegin(GL_POLYGON);
-		glColor3f(0.5,0.5,0.5);
-		glVertex2f((130-(PW/2))/(PW/2),(210-(PH/2))/(PH/2));
-		glVertex2f((130-(PW/2))/(PW/2),(10-(PH/2))/(PH/2));
-		glVertex2f((180-(PW/2))/(PW/2),(10-(PH/2))/(PH/2));
-		glVertex2f((180-(PW/2))/(PW/2),(210-(PH/2))/(PH/2));
-	glEnd();
-
-	glColor3f(0.0,0.0,0.0);
+	drawPolly(10,10,60,210,BH,BW);
+	drawPolly(70,10,120,210,BH,BW);
+	drawPolly(130,10,180,210,BH,BW);
+	glColor4f(0.0,0.0,0.0,1.0);
 
 	glBegin(GL_LINES);
-		glVertex2f((10-(PW/2))/(PW/2),((210 * r)-(PH/2))/(PH/2));
-		glVertex2f((60-(PW/2))/(PW/2),((210 * r)-(PH/2))/(PH/2));
+		glVertex2f((10-(BW/2))/(BW/2),((210 * r)-(BH/2))/(BH/2));
+		glVertex2f((60-(BW/2))/(BW/2),((210 * r)-(BH/2))/(BH/2));
 	glEnd();
 
 	glBegin(GL_LINES);
-		glVertex2f((70-(PW/2))/(PW/2),((210 * g)-(PH/2))/(PH/2));
-		glVertex2f((120-(PW/2))/(PW/2),((210 * g)-(PH/2))/(PH/2));
+		glVertex2f((70-(BW/2))/(BW/2),((210 * g)-(BH/2))/(BH/2));
+		glVertex2f((120-(BW/2))/(BW/2),((210 * g)-(BH/2))/(BH/2));
 	glEnd();
 
 	glBegin(GL_LINES);
-		glVertex2f((130-(PW/2))/(PW/2),((210 * b)-(PH/2))/(PH/2));
-		glVertex2f((180-(PW/2))/(PW/2),((210 * b)-(PH/2))/(PH/2));
+		glVertex2f((130-(BW/2))/(BW/2),((210 * b)-(BH/2))/(BH/2));
+		glVertex2f((180-(BW/2))/(BW/2),((210 * b)-(BH/2))/(BH/2));
 	glEnd();
+
+	glColor4f(r,g,b,a);
+	drawPolly(10,220,180,250,BH,BW);
 
 	return;
+}
 
+void drawPolly(int x1, int y1, int x2, int y2, float h, float w)
+{
+	//10,250 180,250
+	glBegin(GL_POLYGON);
+		//glColor4f(r,g,b,a);
+		glVertex2f((x1-(w/2))/(w/2), (y1-(h/2))/(h/2));
+		glVertex2f((x1-(w/2))/(w/2), (y2-(h/2))/(h/2));
+		glVertex2f((x2-(w/2))/(w/2), (y2-(h/2))/(h/2));
+		glVertex2f((x2-(w/2))/(w/2), (y1-(h/2))/(h/2));
+	glEnd();
+
+	glFlush();
+
+	return;
+}
+
+void colorSquare()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//glColor3f(0.0,1.0,0.0);
+	glBegin(GL_POLYGON);
+		glColor4f(1.0,0,0,1.0);
+		glVertex2f(-1,-1);
+		glColor4f(0,1.0,0,1);
+		glVertex2f(-1,1);
+		glColor4f(1.0,1.0,0,1.0);
+		glVertex2f(1,1);
+		glColor4f(0,0,1.0,1.0);
+		glVertex2f(1,-1);
+	glEnd();
+
+	glFlush();
 }
 
 void drawShape(GLint x, GLint y)
@@ -148,7 +171,7 @@ void drawShape(GLint x, GLint y)
 
 void drawPoint( GLint x , GLint y )
 {
-	glColor3f(r,g,b);
+	glColor4f(r,g,b,a);
 	glPointSize(3.0);
 	glBegin(GL_POINTS);
 		glVertex2f((x-(WW/2))/(WW/2),-(y-(WH/2))/(WH/2));
@@ -174,7 +197,7 @@ void drawRectagle( GLint x , GLint y )
 		glVertex2f(prevX,downY);
 	glEnd();
 
-	glColor3f(r,g,b);
+	glColor4f(r,g,b,a);
 	glBegin(GL_POLYGON);
 		glVertex2f(downX,downY);
 		glVertex2f(downX,curY);
@@ -196,14 +219,14 @@ void drawLine(GLint x, GLint y)
 	curX=(x-(WW/2))/(WW/2); 
 	curY=-(y-(WH/2))/(WH/2);
 
-	glColor3f(r,g,b);
+	glColor4f(r,g,b,a);
 	glLineWidth(3.0);
 
 	glBegin(GL_LINES);
 		glColor4f(1.0,1.0,1.0,0.0);
 		glVertex2f(downX, downY);
 		glVertex2f(prevX, prevY);
-		glColor3f(r,g,b);
+		glColor4f(r,g,b,a);
 		glVertex2f(downX, downY);
 		glVertex2f(curX, curY);
 	glEnd();
@@ -222,48 +245,40 @@ void selectColor(int item)
 		case 0:
 		{
 			r = 0.0,g = 0.0,b = 0.0;
-			//glColor3f(0.0,0.0,0.0);
 		} break;
 		case 1: 
 		{
 			r = 1.0,g = 0.0,b = 0.0;
-			//glColor3f(1.0,0.0,0.0);
 		} break;
 		case 2:
 		{
 			r = 0.0,g = 1.0,b = 0.0;
-			//glColor3f(0.0,1.0,0.0);
 		} break;
 		case 3:
 		{
 			r = 0.0,g = 0.0,b = 1.0;
-			//glColor3f(0.0,0.0,1.0);
 		} break;
 		case 4:
 		{
 			r = 1.0,g = 0.0,b = 1.0;
-			//glColor3f(0.0,0.0,1.0);
 		} break;
 		case 5:
 		{
 			r = 1.0,g = 1.0,b = 0.0;
-			//glColor3f(0.0,0.0,1.0);
 		} break;
 		case 6:
 		{
 			r = 0.0,g = 1.0,b = 1.0;
-			//glColor3f(0.0,0.0,1.0);
 		} break;
 		case 7:
 		{
 			r = 1.0,g = 0.5,b = 0.0;
-			//glColor3f(0.0,0.0,1.0);
 		} break;
 		default: {} break;
 	}
-	if(palleteWindow != -1)
+	if(brightnessWindow != -1)
 	{	
-		glutSetWindow(palleteWindow);
+		glutSetWindow(brightnessWindow);
 		glutPostRedisplay();
 		glutSetWindow(mainWindow);
 	}	
@@ -292,74 +307,89 @@ void mousePressHandler(GLint button, GLint state, GLint x, GLint y)
 		prevX = upX;
 		prevY = upY;
 	}
-	//printf("downx = %d, downy = %d\n", downX, downY);
+	//printf("downx = %d, downy = %d\n", x, y2);
 	return;
 }
 
-void test(GLint button, GLint state, GLint x, GLint y)
+void colorMouseHandler(GLint button, GLint state, GLint x, GLint y)
 {
-	printf("x = %d, y = %d\n", x,y);
+	GLubyte *pixelData = malloc(4 * 1 * 1);
+	glReadPixels(x, glutGet(GLUT_WINDOW_HEIGHT) - y, 1,1, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
+	//printf("r = %d , g= %d, b= %d a= %d\n", pixelData[0], pixelData[1], pixelData[2], pixelData[3]);
+	r = (float)pixelData[0] / 255.0;
+	g = (float)pixelData[1] / 255.0;
+	b = (float)pixelData[2] / 255.0;
+
+	if(brightnessWindow != -1)
+	{	
+		int cur = glutGetWindow();
+		glutSetWindow(brightnessWindow);
+		glutPostRedisplay();
+		glutSetWindow(cur);
+	}	
+	//printf("r %d g %d b %d \n", r,g,b);
 }
 
-void moveSliders( GLint x , GLint y )
+void moveRGBSliders( GLint x , GLint y )
 {	
 	GLfloat curX, curY;
-	curX=(10-(PW/2))/(PW/2); 
-	curY=-(y-(PH/2))/(PH/2);
+	curX=(10-(BW/2))/(BW/2); 
+	curY=-(y-(BH/2))/(BH/2);
 
-	if(x >= 10 && x <= 60 && y >= 290 && y <= 490)
+	//TODO:update so that it redraws the polygon instead on the previous line should fix the line issue
+
+	if(x >= 10 && x <= 60 && y >= 40 && y <= 230)
 	{	
-		r = ((490.0-(float)y)/200.0);
-		curX=(10-(PW/2))/(PW/2); 
-		curY=((210 * r)-(PH/2))/(PH/2);
+		r = ((210 - ((float)y - 30.0))/200.0);
+		curX=(10-(BW/2))/(BW/2); 
+		curY=((210 * r)-(BH/2))/(BH/2);
+
+		glColor4f(0.5,0.5,0.5,1.0);
+		drawPolly(10,10,60,210,BH,BW);
 
 		glBegin(GL_LINES);
-			glColor4f(0.5,0.5,0.5,0.0);
-			glVertex2f((10-(PW/2))/(PW/2),prevY);
-			glVertex2f((60-(PW/2))/(PW/2),prevY);
-			glColor3f(0.0,0.0,0.0);
-			glVertex2f((10-(PW/2))/(PW/2),((210 *  r)-(PH/2))/(PH/2));
-			glVertex2f((60-(PW/2))/(PW/2),((210 *  r)-(PH/2))/(PH/2));
+			glColor4f(0.0,0.0,0.0,1.0);
+			glVertex2f((10-(BW/2))/(BW/2),((210 *  r)-(BH/2))/(BH/2));
+			glVertex2f((60-(BW/2))/(BW/2),((210 *  r)-(BH/2))/(BH/2));
 		glEnd();
 		glFlush();
 	}
-	if(x >= 70 && x <= 120 && y >= 290 && y <= 490)
+	if(x >= 70 && x <= 120 && y >= 40 && y <= 230)
 	{	
-		g = ((490.0-(float)y)/200.0);
+		g = ((210 - ((float)y - 30.0)) /200.0);
+		curX=(70-(BW/2))/(BW/2); 
+		curY=((210 * g)-(BH/2))/(BH/2);
 
-		curX=(70-(PW/2))/(PW/2); 
-		curY=((210 * g)-(PH/2))/(PH/2);
+		glColor4f(0.5,0.5,0.5,1.0);
+		drawPolly(70,10,120,210,BH,BW);
 
 		glBegin(GL_LINES);
-			glColor4f(0.5,0.5,0.5,0.0);
-			glVertex2f((70-(PW/2))/(PW/2),prevY);
-			glVertex2f((120-(PW/2))/(PW/2),prevY);
-			glColor3f(0.0,0.0,0.0);
-			glVertex2f((70-(PW/2))/(PW/2),((210 *  g)-(PH/2))/(PH/2));
-			glVertex2f((120-(PW/2))/(PW/2),((210 *  g)-(PH/2))/(PH/2));
+			glColor4f(0.0,0.0,0.0,1.0);
+			glVertex2f((70-(BW/2))/(BW/2),((210 *  g)-(BH/2))/(BH/2));
+			glVertex2f((120-(BW/2))/(BW/2),((210 *  g)-(BH/2))/(BH/2));
 		glEnd();
 		glFlush();
 	}
-	if(x >= 130 && x <= 180 && y >= 290 && y <= 490)
+	if(x >= 130 && x <= 180 && y >= 40 && y <= 230)
 	{	
-		b = ((490.0-(float)y)/200.0);
+		b = ((210 - ((float)y - 30.0))/200.0);
+		curX=(130-(BW/2))/(BW/2); 
+		curY=((210 * b)-(BH/2))/(BH/2);
 
-		curX=(130-(PW/2))/(PW/2); 
-		curY=((210 * b)-(PH/2))/(PH/2);
+		glColor4f(0.5,0.5,0.5,1.0);
+		drawPolly(130,10,180,210,BH,BW);
 
 		glBegin(GL_LINES);
-			glColor4f(0.5,0.5,0.5,0.0);
-			glVertex2f((130-(PW/2))/(PW/2),prevY);
-			glVertex2f((180-(PW/2))/(PW/2),prevY);
-			glColor3f(0.0,0.0,0.0);
-			glVertex2f((130-(PW/2))/(PW/2),((210 *  b)-(PH/2))/(PH/2));
-			glVertex2f((180-(PW/2))/(PW/2),((210 *  b)-(PH/2))/(PH/2));
+			glColor4f(0.0,0.0,0.0,1.0);
+			glVertex2f((130-(BW/2))/(BW/2),((210 *  b)-(BH/2))/(BH/2));
+			glVertex2f((180-(BW/2))/(BW/2),((210 *  b)-(BH/2))/(BH/2));
 		glEnd();
 		glFlush();
 	}
-	glColor3f(r,g,b);
+	glColor4f(r,g,b,a);
 	prevX = curX;
 	prevY = curY;
+	drawPolly(10,220,180,250,BH,BW);
 	return;
 }
 
@@ -369,20 +399,43 @@ void menu(int item)
 	{
 		case 0:
 		{
-			CLEAR = 1;
 			glutPostRedisplay();
 		}break;
 		case 1:
 		{
-			glutInitWindowSize(PW,PH);
-			glutInitWindowPosition(500 - (PW+20),200);
-			palleteWindow = glutCreateWindow("color picker");
+			if(palleteWindow == -1 )
+			{
+				glutInitWindowSize(CW,CH);
+				glutInitWindowPosition(500 - (CW+20),100);
+				palleteWindow = glutCreateWindow("color picker");
 
-			glutDisplayFunc(displayPalette);
-			glutMouseFunc(mousePressHandler);
-			glutMotionFunc(moveSliders);
+				glutDisplayFunc(colorSquare);
+				glutMouseFunc(colorMouseHandler);
+			}
+			else
+			{
+				glutDestroyWindow(palleteWindow);
+				palleteWindow = -1;
+			}
 
-		}
+		}break;
+		case 2:
+		{
+			if(brightnessWindow == -1)
+			{
+				glutInitWindowSize(BW, BH);
+				glutInitWindowPosition(500 - (BW+20),400);
+				brightnessWindow = glutCreateWindow("Brightness");
+
+				glutDisplayFunc(displayRGBSlider);
+				glutMotionFunc(moveRGBSliders);
+			}
+			else
+			{
+				glutDestroyWindow(brightnessWindow);
+				brightnessWindow = -1;
+			}
+		}break;
 		default:{}break;
 	}
 	return;
@@ -391,7 +444,7 @@ void menu(int item)
 int createMainWindow()
 {
 	glutInitWindowSize(WW,WH);
-	glutInitWindowPosition(500,200);
+	glutInitWindowPosition(500,100);
 	int id = glutCreateWindow("MyPaint");
 
 	glutSetMenu(addMainMenu());
@@ -405,16 +458,6 @@ int createMainWindow()
 	return id;
 }
 
-int createPalleteWindow()
-{
-	int id = glutCreateSubWindow(mainWindow,(WW-PW),0,PW,WH);
-	glutDisplayFunc(displayPalette);
-	glutMouseFunc(mousePressHandler);
-	glutMotionFunc(moveSliders);
-
-	return id;
-
-}
 
 int addMainMenu()
 {
@@ -435,10 +478,11 @@ int addMainMenu()
 	//glutAddMenuEntry("Polygon",3);
 	
 	int mainMenu = glutCreateMenu(menu);
-	glutAddSubMenu("color",colorSubMenu);
-	glutAddSubMenu("shape",shapeMenu);
-	glutAddMenuEntry("clear",0);
-	glutAddMenuEntry("Add Color",1);
+	glutAddSubMenu("Color",colorSubMenu);
+	glutAddSubMenu("Shape",shapeMenu);
+	glutAddMenuEntry("Clear",0);
+	glutAddMenuEntry("Color Pallete",1);
+	glutAddMenuEntry("Brightness",2);
 
 	return mainMenu;
 }
@@ -447,7 +491,6 @@ int main(int argc, char **argv)
 {
 
 	glutInit(&argc, argv);
-	
 	mainWindow = createMainWindow();
 
 	//palleteWindow = createPalleteWindow();
