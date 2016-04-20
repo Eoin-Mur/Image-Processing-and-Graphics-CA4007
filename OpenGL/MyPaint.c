@@ -15,6 +15,7 @@
 
 //gcc MyPaint.c -o myPaint glut32.lib -lopengl32 -lglu32
 
+//test
 void drawPolly(int x1, int y1, int x2, int y2, float h, float w);
 void drawPoint(GLint x, GLint y);
 void drawRectagle(GLint x, GLint y);
