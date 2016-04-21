@@ -59,7 +59,8 @@ int brightnessWindow = -1;
 int numPolyPoints = -1;
 int drawnPPoints = 0;
 int polyArray[16]; 
- 
+int tempFlag = -1;
+
 void display()
 {
 	glClearColor(1.0,1.0,1.0,1.0);
@@ -243,6 +244,23 @@ void drawLine(GLint x, GLint y)
 	return;
 }
 
+void drawPolygon(int pointsArray[], int numberOfPoints)
+{
+	glColor4f(r,g,b,a);
+	glBegin(GL_POLYGON);
+		for (int i = 0; i < numberOfPoints; ++i)
+		{
+			glVertex2f((pointsArray[i * 2]-(WW/2))/(WW/2),-(pointsArray[(i * 2)+1]-(WH/2))/(WH/2));
+			//printf("i = %d, p[%d] = %d, p[%d] = %d\n",i,(i*2),pointsArray[i*2],(i*2)+1,pointsArray[(i*2)+1] );
+		}
+	glEnd();
+
+	glFlush();
+
+	drawnPPoints = 0;
+	return;
+}
+
 void selectColor(int item)
 {
 	switch(item)
@@ -299,7 +317,6 @@ void selectShape(int item)
 void mousePressHandler(GLint button, GLint state, GLint x, GLint y)
 {
 
-	printf("shape %d",selectedShape);
 	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
 		downX = (x-(WW/2))/(WW/2); 
@@ -331,11 +348,15 @@ void mousePressHandler(GLint button, GLint state, GLint x, GLint y)
 		prevX = upX;
 		prevY = upY;
 		
-		polyArray[drawnPPoints + 0] = upX;
-		polyArray[drawnPPoints + 1] = upY;
+		polyArray[drawnPPoints * 2] = x;
+		polyArray[(drawnPPoints * 2) + 1] = y;
 		
-		drawPoint(upX,upY);
-		drawnPPoints + 1;
+		drawPoint(x,y);
+		drawnPPoints++;
+		if(drawnPPoints == numPolyPoints)
+		{
+			drawPolygon(polyArray, numPolyPoints);
+		}
 	}
 	//printf("downx = %d, downy = %d\n", x, y2);
 	return;

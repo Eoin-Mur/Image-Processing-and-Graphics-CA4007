@@ -146,6 +146,7 @@ void colorSquare()
 
 void drawShape(GLint x, GLint y)
 {
+	printf("here");
 	switch(selectedShape)
 	{
 		case 0:
@@ -298,6 +299,7 @@ void selectShape(int item)
 
 void mousePressHandler(GLint button, GLint state, GLint x, GLint y)
 {
+
 	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
 		downX = (x-(WW/2))/(WW/2); 
