@@ -246,6 +246,18 @@ void drawLine(GLint x, GLint y)
 
 void drawPolygon(int pointsArray[], int numberOfPoints)
 {
+
+	//first need to erase guide points
+	for(int i = 0; i < numberOfPoints; i++)
+	{
+		glBegin(GL_POINTS);
+			glColor4f(1.0,1.0,1.0,1.0);
+			glVertex2f((pointsArray[i * 2]-(WW/2))/(WW/2),-(pointsArray[(i * 2)+1]-(WH/2))/(WH/2));
+		glEnd();
+
+		glFlush();
+	}
+
 	glColor4f(r,g,b,a);
 	glBegin(GL_POLYGON);
 		for (int i = 0; i < numberOfPoints; ++i)
